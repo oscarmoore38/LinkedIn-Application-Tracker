@@ -2,9 +2,30 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    TimeSpan outOfWork = DateTime.Now - new DateTime(2023, 11, 15);
+    int totalDays = @Convert.ToInt32(outOfWork.TotalDays);
+    string outOfWorkStatus; 
+    
+    if (totalDays <= 30)
+    {
+        outOfWorkStatus = "Not too bad";
+    }
+    else if (totalDays <= 90 )
+    {
+        outOfWorkStatus = "Getting spicy there, mate";
+    }
+    else
+    {
+        outOfWorkStatus = "oof!";
+    }
+
+
+    
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Welcome to the LinkedIn Job Tracker</h1>
+    <p class="lead">Because LinkedIn's built in application filtering functionality is just no good.</p>
+    <p>You've been out of work for @totalDays days - @outOfWorkStatus</p>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
