@@ -14,6 +14,7 @@
     {
         outOfWorkStatus = "Getting spicy";
     }
+    using linkedInApplicationTracker.Models;
     else
     {
         outOfWorkStatus = "Oof!";
@@ -37,9 +38,25 @@
             <th scope="col">Title</th>
             <th scope="col">Company</th>
             <th scope="col">Job URL</th>
+            <th scope="col">Outcome</th>
             <th scope="col">Delete</th>
         </tr>
     </thead>
     <tbody>
+        @foreach (var job in Model.JobList)
+    {
+        <tr>
+            <td>@job.Date</td>
+            <td>@job.Title</td>
+            <td>@job.Company</td>
+            <td>@job.JobsURL</td>
+            <td>@job.Outcome</td>
+            <td>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@pizza.Id">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
