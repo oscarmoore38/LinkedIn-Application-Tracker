@@ -14,7 +14,6 @@
     {
         outOfWorkStatus = "Getting spicy";
     }
-    using linkedInApplicationTracker.Models;
     else
     {
         outOfWorkStatus = "Oof!";
@@ -52,7 +51,7 @@
             <td>@job.JobsURL</td>
             <td>@job.Outcome</td>
             <td>
-                <form method="post" asp-page-handler="Delete" asp-route-id="@pizza.Id">
+                <form method="post" asp-page-handler="Delete" asp-route-id="@job.Id">
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </td>
