@@ -1,7 +1,7 @@
 ﻿@page
-@model ManageJobsModel
+@model ManageApplicationModel
 @{
-    ViewData["Title"] = "Manage Jobs 💼";
+    ViewData["Title"] = "Manage apps 💼";
     TimeSpan outOfWork = DateTime.Now - new DateTime(2023, 11, 15);
     int totalDays = @Convert.ToInt32(outOfWork.TotalDays);
     string outOfWorkStatus; 
@@ -36,22 +36,22 @@
             <th scope="col">Date</th>
             <th scope="col">Title</th>
             <th scope="col">Company</th>
-            <th scope="col">Job URL</th>
+            <th scope="col">app URL</th>
             <th scope="col">Outcome</th>
             <th scope="col">Delete</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var job in Model.JobList)
+        @foreach (var app in Model.AppList)
     {
         <tr>
-            <td>@job.Date</td>
-            <td>@job.Title</td>
-            <td>@job.Company</td>
-            <td>@job.JobsURL</td>
-            <td>@job.Outcome</td>
+            <td>@app.Date</td>
+            <td>@app.Title</td>
+            <td>@app.Company</td>
+            <td>@app.ApplicationURL</td>
+            <td>@app.Outcome</td>
             <td>
-                <form method="post" asp-page-handler="Delete" asp-route-id="@job.JobsID">
+                <form method="post" asp-page-handler="Delete" asp-route-id="@app.ApplicationID">
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </td>
