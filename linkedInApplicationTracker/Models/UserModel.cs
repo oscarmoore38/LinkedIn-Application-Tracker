@@ -11,7 +11,7 @@ namespace linkedInApplicationTracker.Models
         [Required]
         public string FirstName {get; set;} = default!;
         public string LastName {get; set;} = default!;
-        public ICollection<Jobs> Jobs {get;set;} = default!;
+        public ICollection<Application> Application {get;set;} = default!;
 
     }
 }
