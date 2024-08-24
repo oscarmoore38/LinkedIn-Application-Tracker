@@ -9,8 +9,9 @@ namespace linkedInApplicationTracker.Models
 {
     public class Jobs
     {
-        public int Id {get; set;}
+        public int JobsID {get; set;}
         [Required]
+        public string UserID {get; set;} = default!; // FK 
         public DateTime Date {get; set;}
         public string Title {get; set;} = default!;
         public string Company {get; set;} = default!;
