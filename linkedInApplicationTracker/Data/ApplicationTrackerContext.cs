@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace linkedInApplicationTracker.Data
 {
-    public class JobContext : DbContext
+    public class ApplicationTrackerContext : DbContext
     {
         // Insert DB access code
     }
