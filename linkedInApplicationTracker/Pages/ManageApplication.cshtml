@@ -1,7 +1,7 @@
 ﻿@page
 @model ManageJobsModel
 @{
-    ViewData["Title"] = "Manage Jobs";
+    ViewData["Title"] = "Manage Jobs 💼";
     TimeSpan outOfWork = DateTime.Now - new DateTime(2023, 11, 15);
     int totalDays = @Convert.ToInt32(outOfWork.TotalDays);
     string outOfWorkStatus; 
@@ -51,7 +51,7 @@
             <td>@job.JobsURL</td>
             <td>@job.Outcome</td>
             <td>
-                <form method="post" asp-page-handler="Delete" asp-route-id="@job.Id">
+                <form method="post" asp-page-handler="Delete" asp-route-id="@job.JobsID">
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </td>

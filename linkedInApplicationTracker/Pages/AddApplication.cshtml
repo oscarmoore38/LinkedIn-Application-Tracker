@@ -1,0 +1,60 @@
+﻿@page
+@model AddJobs
+@{
+    ViewData["Title"] = "Add Job 🥳";
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <p>To add new jobs, use the form below or mass upload via supported file</p>
+</div>
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Date Field with Popup Calendar -->
+    <div class="form-group">
+        <label asp-for="NewApplication.Date" class="control-label"></label>
+        <input asp-for="NewApplication.Date" class="form-control" type="date" />
+        <span asp-validation-for="NewApplication.Date" class="text-danger"></span>
+    </div>
+
+    <!-- Title Field -->
+    <div class="form-group">
+        <label asp-for="NewApplication.Title" class="control-label"></label>
+        <input asp-for="NewApplication.Title" class="form-control" />
+        <span asp-validation-for="NewApplication.Title" class="text-danger"></span>
+    </div>
+
+    <!-- Company Field -->
+    <div class="form-group">
+        <label asp-for="NewApplication.Company" class="control-label"></label>
+        <input asp-for="NewApplication.Company" class="form-control" />
+        <span asp-validation-for="NewApplication.Company" class="text-danger"></span>
+    </div>
+
+    <!-- URL to Posting Field -->
+    <div class="form-group">
+        <label asp-for="NewApplication.ApplicationURL" class="control-label"></label>
+        <input asp-for="NewApplication.ApplicationURL" class="form-control" />
+        <span asp-validation-for="NewApplication.ApplicationURL" class="text-danger"></span>
+    </div>
+
+    <!-- Outcome Dropdown Field -->
+    <div class="form-group">
+        <label asp-for="NewApplication.Outcome" class="control-label"></label>
+        <select asp-for="NewApplication.Outcome" class="form-control">
+            <option value="Applied">Applied</option>
+            <option value="Interviewing">Interviewing</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Offer">Offer</option>
+            <option value="Accepted">Accepted</option>
+        </select>
+        <span asp-validation-for="NewApplication.Outcome" class="text-danger"></span>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Add Application</button>
+</form>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}
