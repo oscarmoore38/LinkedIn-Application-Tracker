@@ -21,4 +21,6 @@ appsettings.Development.json
 
 # DB files
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
