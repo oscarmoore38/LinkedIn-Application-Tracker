@@ -1,10 +1,11 @@
 ﻿@page
 @model MyApp.Namespace.MyAccountModel
 @{
+    ViewData["Title"] = "Manage Account 👤";
 }
 
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to your account</h1>
-    <p class="lead">This is my accout page</p>
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <p>Use this page to manage your account.</p>
 </div>
