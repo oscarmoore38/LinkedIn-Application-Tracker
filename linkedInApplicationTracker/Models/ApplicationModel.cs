@@ -11,7 +11,10 @@ namespace linkedInApplicationTracker.Models
     {
         public int ApplicationID {get; set;}
         [Required]
-        public string UserID {get; set;} = default!; // FK 
+        // Foregin Key
+        public string UserID {get; set;} = default!; 
+        // Navigation property to the user
+        public User User { get; set; } = default!;
         public DateTime Date {get; set;}
         public string Title {get; set;} = default!;
         public string Company {get; set;} = default!;
