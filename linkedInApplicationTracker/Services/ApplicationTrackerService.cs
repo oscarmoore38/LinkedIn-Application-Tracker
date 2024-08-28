@@ -1,13 +1,11 @@
 using linkedInApplicationTracker.Data;
-using linkedInApplicationTracker.Models; 
+using linkedInApplicationTracker.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace linkedInApplicationTracker.Services
 {
     public class ApplicationTrackerService
     {
-        // Insert CRUD operations here. 
-        // Tutorial - https://github.com/MicrosoftDocs/mslearn-create-razor-pages-aspnet-core/blob/main/ContosoPizza/Services/PizzaService.cs
-
         private readonly ApplicationTrackerContext _ApplicationTrackerContext = default!; 
 
         public ApplicationTrackerService(ApplicationTrackerContext ApplicationTrackerContext)
@@ -16,8 +14,11 @@ namespace linkedInApplicationTracker.Services
         }
 
         // CRUD skeleton code below:
-        public IList<Application> GetApplications()
+        public async Task<IList<Application>> GetApplicationsAsync()
         {
+            if (_ApplicationTrackerContext.Applications != null){
+                return await _ApplicationTrackerContext.Applications.Take(10).ToListAsync();
+            }
             return new List<Application>();
         }
 
