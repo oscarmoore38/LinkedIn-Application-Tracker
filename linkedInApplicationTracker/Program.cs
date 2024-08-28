@@ -35,7 +35,8 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<ApplicationTrackerContext>();
     context.Database.EnsureCreated();
-    // DbInitializer.Initialize(context);
+    // Seed with test data if required. 
+    DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
