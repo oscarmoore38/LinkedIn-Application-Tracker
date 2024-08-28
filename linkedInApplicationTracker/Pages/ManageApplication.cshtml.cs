@@ -19,10 +19,10 @@ public class ManageApplicationModel : PageModel
         _applicationTrackerService = service; 
     }
     
-    public void OnGet()
+    public async void OnGetAsync()
     {
-        // Populate list 
-        AppList = _applicationTrackerService.GetApplications();
+        // Populate list  
+        AppList = await _applicationTrackerService.GetApplicationsAsync();
     }
     // public IActionResult OnPost()
     // {
