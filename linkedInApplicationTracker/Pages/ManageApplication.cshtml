@@ -1,36 +1,10 @@
 ﻿@page
 @model ManageApplicationModel
 @{
-    ViewData["Title"] = "Manage apps 💼";
-    TimeSpan outOfWork = DateTime.Now - new DateTime(2023, 11, 15);
-    int totalDays = @Convert.ToInt32(outOfWork.TotalDays);
-    string outOfWorkStatus; 
-    
-    if (totalDays <= 30)
-    {
-        outOfWorkStatus = "Relax";
-    }
-    else if (totalDays <= 90 )
-    {
-        outOfWorkStatus = "Getting spicy";
-    }
-    else
-    {
-        outOfWorkStatus = "Oof!";
-    }
+    ViewData["Title"] = "Manage Applications 💼";
 }
 
-<div class="text-center">
-    <h1 class="display-4">@ViewData["Title"]</h1>
-    <p>Use this page to manage your LinkedIn applications.</p>
-</div>
-
-<div class="quote-box">
-    You've been out of work for @totalDays days - @outOfWorkStatus
-</div>
-
-
-<table class="table mt-5">
+<table class="table mt-5 my-5">
     <thead>
         <tr>
             <th scope="col">Date</th>
@@ -45,15 +19,27 @@
         @foreach (var app in Model.AppList)
     {
         <tr>
-            <td>@app.Date</td>
+            <td>@app.Date.ToString("MM/dd/yyyy")</td>
             <td>@app.Title</td>
             <td>@app.Company</td>
-            <td>@app.ApplicationURL</td>
+            <td>
+                <a href="@app.ApplicationURL" target="_blank" rel="noopener noreferrer">@app.ApplicationURL</a>
+            </td>
             <td>@app.Outcome</td>
             <td>
-                <form method="post" asp-page-handler="Delete" asp-route-id="@app.ApplicationID">
-                    <button class="btn btn-danger">Delete</button>
-                </form>
+                <div class="d-flex gap-2">
+                    <form method="post" asp-page-handler="Edit" asp-route-id="@app.ApplicationID">
+                        <button class="btn btn-success">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@app.ApplicationID">
+                        <button class="btn btn-danger">
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </form>
+                </div>
             </td>
         </tr>
     }
