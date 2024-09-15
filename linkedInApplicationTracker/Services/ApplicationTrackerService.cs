@@ -44,7 +44,8 @@ namespace linkedInApplicationTracker.Services
 
         public async Task AddApplicationAsync(Application Application)
         {
-            
+            _ApplicationTrackerContext.Add(Application);
+            await _ApplicationTrackerContext.SaveChangesAsync();
         }
 
 
