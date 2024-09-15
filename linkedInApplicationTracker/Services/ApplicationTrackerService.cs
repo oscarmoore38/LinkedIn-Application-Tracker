@@ -1,5 +1,6 @@
 using linkedInApplicationTracker.Data;
 using linkedInApplicationTracker.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace linkedInApplicationTracker.Services
@@ -14,15 +15,40 @@ namespace linkedInApplicationTracker.Services
         }
 
         // CRUD skeleton code below:
-        public async Task<IList<Application>> GetApplicationsAsync()
+
+        public void AddUser()
         {
-            if (_ApplicationTrackerContext.Applications != null){
-                return await _ApplicationTrackerContext.Applications.Take(10).ToListAsync();
-            }
-            return new List<Application>();
+        
         }
 
-        public void AddApplication(Application job)
+
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            
+            return await _ApplicationTrackerContext.Users
+                .Include(u => u.Applications)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserID == id);
+
+        }
+
+        public void UpdateUser(int id)
+        {
+        
+        }
+
+        public void DeleteUser(int id)
+        {
+        
+        }
+
+        public async Task AddApplicationAsync(Application Application)
+        {
+            
+        }
+
+
+        public void UpdateApplication(Application job)
         {
 
         }
@@ -31,8 +57,6 @@ namespace linkedInApplicationTracker.Services
         {
         
         }
-
-
 
     }
 }
