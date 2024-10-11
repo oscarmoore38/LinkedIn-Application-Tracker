@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.SignalR;
 
 namespace linkedInApplicationTracker.Models
@@ -13,6 +14,7 @@ namespace linkedInApplicationTracker.Models
         [Required]
         // Foregin Key
         public int UserID {get; set;} = default!; 
+        [ValidateNever]
         // Navigation property to the user
         public User User { get; set; } = default!;
         public DateTime Date {get; set;}
