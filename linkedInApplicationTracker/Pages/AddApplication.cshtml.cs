@@ -17,14 +17,14 @@ public class AddApplication : PageModel
     public void OnGet()
     {
     }
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
         if(!ModelState.IsValid || NewApplication == null)
         {
             return Page();
         }
 
-        _service.AddApplication(NewApplication);
+        await _service.AddApplicationAsync(NewApplication);
 
         return RedirectToAction("Get");
         
