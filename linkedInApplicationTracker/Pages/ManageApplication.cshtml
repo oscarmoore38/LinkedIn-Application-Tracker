@@ -2,46 +2,82 @@
 @model ManageApplicationModel
 @{
     ViewData["Title"] = "Manage Applications 💼";
+
+    var welcomeMessage = Model.CurrentUser?.FirstName ?? "";
 }
+
+<div>
+    <H5>Welcome @welcomeMessage, here you can manage your applications. </H5>
+</div>
+
+<form asp-page="./ManageApplication" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Search by keyword:
+            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-page="./ManageApplication">Back to full List</a>
+        </p>
+    </div>
+</form>
 
 <table class="table mt-5 my-5">
     <thead>
         <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Title</th>
-            <th scope="col">Company</th>
+            <th scope="col">
+            <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.DateSort">
+                    Date
+                </a>
+            </th>
+            <th scope="col">
+                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.TitleSort">
+                    Title
+                </a>
+            </th>
+            <th scope="col">
+                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.CompanySort">
+                    Company
+                </a>
+            </th>
             <th scope="col">Application URL</th>
-            <th scope="col">Outcome</th>
+            <th scope="col">
+                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.OutcomeSort">
+                    Outcome
+                </a>
+            </th>
             <th scope="col">Edit/Delete</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var app in Model.AppList)
+    @if (Model.CurrentUsersApplications != null)
     {
-        <tr>
-            <td>@app.Date.ToString("MM/dd/yyyy")</td>
-            <td>@app.Title</td>
-            <td>@app.Company</td>
-            <td>
-                <a href="@app.ApplicationURL" target="_blank" rel="noopener noreferrer">@app.ApplicationURL</a>
-            </td>
-            <td>@app.Outcome</td>
-            <td>
-                <div class="d-flex gap-2">
-                    <form method="post" asp-page-handler="Edit" asp-route-id="@app.ApplicationID">
-                        <button class="btn btn-success">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                    </form>
-                    <form method="post" asp-page-handler="Delete" asp-route-id="@app.ApplicationID">
-                        <button class="btn btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
+            @foreach (var app in Model.CurrentUsersApplications)
+        {
+            <tr>
+                <td>@app.Date.ToString("MM/dd/yyyy")</td>
+                <td>@app.Title</td>
+                <td>@app.Company</td>
+                <td>
+                    <a href="@app.ApplicationURL" target="_blank" rel="noopener noreferrer">@app.ApplicationURL</a>
+                </td>
+                <td>@app.Outcome</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <form method="post" asp-page-handler="Edit" asp-route-id="@app.ApplicationID">
+                            <button class="btn btn-success">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@app.ApplicationID">
+                            <button class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
 
-                    </form>
-                </div>
-            </td>
-        </tr>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
     }
     </tbody>
 </table>

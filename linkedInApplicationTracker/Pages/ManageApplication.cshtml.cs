@@ -2,7 +2,8 @@ using linkedInApplicationTracker.Models;
 using linkedInApplicationTracker.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NuGet.Protocol.Plugins;
+using Microsoft.VisualStudio.Web.CodeGeneration;
+using System;
 
 namespace linkedInApplicationTracker.Pages;
 
@@ -13,7 +14,14 @@ public class ManageApplicationModel : PageModel
     [BindProperty]
     public Application Application {get; set;} = default!;
     public User? CurrentUser {get; set;} = default!;
-    public int UserID = 1;
+    public IList<Application> CurrentUsersApplications {get; set;} = default!;
+    public int UserID = 1; // Will update once user auth is implemented.
+    public string DateSort { get; set; }
+    public string CompanySort { get; set; }
+    public string TitleSort { get; set; }
+    public string OutcomeSort { get; set; }
+    public string CurrentFilter { get; set; }
+    public string CurrentSort { get; set; }
 
     public ManageApplicationModel(ILogger<ManageApplicationModel> logger, ApplicationTrackerService service)
     {
@@ -21,40 +29,124 @@ public class ManageApplicationModel : PageModel
         _applicationTrackerService = service; 
     }
     
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(string sortOrder, string searchString)
     {
+
+        DateSort = String.IsNullOrEmpty(sortOrder) ? "date_desc" : ""; // date ascending by default.
+        CompanySort = sortOrder == "Company" ? "company_desc" : "Company";
+        OutcomeSort = sortOrder == "Outcome" ? "outcome_desc" : "Outcome";
+        TitleSort = sortOrder == "Title" ? "title_desc" : "Title";
+
+        CurrentFilter = searchString;
+
         if (UserID == null) // Will update once user auth is implemented.
         {
             return NotFound();
         }
+
+        // Check if User exists
+        try
+        {
         
-        // Populate list  
-        CurrentUser = await _applicationTrackerService.GetUserByIdAsync(UserID);
+            CurrentUser = await _applicationTrackerService.GetUserByIdAsync(UserID);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while finding user with ID: {UserID}", UserID);
+
+            ModelState.AddModelError(string.Empty, "An error occurred while finding user.");
+
+        }
 
         if (CurrentUser == null)
         {
             return NotFound();
         }
 
+        // Load Applications for current user 
+        IQueryable<Application> applicationIQ =_applicationTrackerService.GetApplicationsByUserId(UserID, searchString);    
+        
+        Console.WriteLine($"Current SearchString value = {searchString}");
+        // Apply sorting
+        switch (sortOrder)
+        {
+            case "date_desc":
+                applicationIQ = applicationIQ.OrderByDescending(a => a.Date);
+                break;
+            case "Company":
+                applicationIQ = applicationIQ.OrderBy(a => a.Company);
+                break;
+            case "company_desc":
+                applicationIQ = applicationIQ.OrderByDescending(a => a.Company);
+                break;
+            case "Outcome":
+                applicationIQ = applicationIQ.OrderBy(a => a.Outcome);
+                break;
+            case "outcome_desc":
+                applicationIQ = applicationIQ.OrderByDescending(a => a.Outcome);
+                break;
+            case "Title":
+                applicationIQ = applicationIQ.OrderBy(a => a.Title);
+                break;
+            case "title_desc":
+                applicationIQ = applicationIQ.OrderByDescending(a => a.Title);
+                break;
+            default:
+                applicationIQ = applicationIQ.OrderBy(a => a.Date);
+                break;
+        }
+
+        // Execute Query
+        try
+        {
+             CurrentUsersApplications = await _applicationTrackerService.ExecuteApplicationsQueryAsync(applicationIQ);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while getting applications for user with ID: {UserID}", UserID);
+
+            ModelState.AddModelError(string.Empty, "An error occurred while getting user applications.");
+
+        }
+
         return Page();
  
     }
-    public async Task<IActionResult> OnPostAsync()
+
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        if(!ModelState.IsValid){
-            return Page();
-        }
+        // Check application exists.  
+        var applicationToDelete = await _applicationTrackerService.GetApplicationByIDAsync(id);
 
-        Application.UserID = UserID; // Update once auth is implemented
-
-        if (await TryUpdateModelAsync<Application>(Application, "application", a => a.Date, a => a.Title, a => a.Company, a => a.ApplicationURL, a => a.Outcome))
+        if (applicationToDelete != null)
         {
-             await _applicationTrackerService.AddApplicationAsync(Application); 
-             return RedirectToPage("./ManageApplication");
+            try{
+                await _applicationTrackerService.DeleteApplicationAsync(applicationToDelete);
+                return RedirectToPage("./ManageApplication");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting application with ID: {ApplicationID}", applicationToDelete.ApplicationID);
+
+                ModelState.AddModelError(string.Empty, "An error occurred while deleting the application.");
+            }
+
+        }
+        else
+        {
+            ModelState.AddModelError(string.Empty, "Application not found.");
         }
 
-        return Page();
+        return RedirectToPage();
 
+    }
+    
+    public IActionResult OnPostEdit(int id)
+    {
+
+        return RedirectToPage("./UpdateApplication", new { id = id });
+    
     }
 
 }
