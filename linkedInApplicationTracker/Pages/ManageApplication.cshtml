@@ -25,23 +25,23 @@
     <thead>
         <tr>
             <th scope="col">
-            <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.DateSort">
+            <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.DateSort" asp-route-currentFilter="@Model.CurrentFilter">
                     Date
                 </a>
             </th>
             <th scope="col">
-                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.TitleSort">
+                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.TitleSort" asp-route-currentFilter="@Model.CurrentFilter">
                     Title
                 </a>
             </th>
             <th scope="col">
-                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.CompanySort">
+                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.CompanySort" asp-route-currentFilter="@Model.CurrentFilter">
                     Company
                 </a>
             </th>
             <th scope="col">Application URL</th>
             <th scope="col">
-                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.OutcomeSort">
+                <a asp-page="./ManageApplication" asp-route-sortOrder="@Model.OutcomeSort" asp-route-currentFilter="@Model.CurrentFilter">
                     Outcome
                 </a>
             </th>
@@ -81,3 +81,23 @@
     }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.CurrentUsersApplications.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.CurrentUsersApplications.HasNextPage ? "disabled" : "";
+}
+
+<a asp-page="./ManageApplication"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageIndex="@(Model.CurrentUsersApplications.PageIndex - 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
+   class="btn btn-primary @prevDisabled">
+    Previous
+</a>
+<a asp-page="./ManageApplication"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageIndex="@(Model.CurrentUsersApplications.PageIndex + 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
+   class="btn btn-primary @nextDisabled">
+    Next
+</a>

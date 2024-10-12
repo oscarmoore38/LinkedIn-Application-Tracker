@@ -49,9 +49,9 @@ namespace linkedInApplicationTracker.Services
             return query;
             }
 
-        public async Task<List<Application>> ExecuteApplicationsQueryAsync(IQueryable<Application> applicationIQ)
+        public async Task<PaginatedList<Application>> GetPagedApplicationsAsync(IQueryable<Application> applicationIQ, int pageIndex, int pageSize)
         {
-            return await applicationIQ.AsNoTracking().ToListAsync();
+            return await PaginatedList<Application>.CreateAsync(applicationIQ.AsNoTracking(), pageIndex, pageSize);
         }
 
         public void UpdateUser(int id)

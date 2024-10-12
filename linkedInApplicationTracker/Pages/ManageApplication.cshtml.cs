@@ -2,7 +2,7 @@ using linkedInApplicationTracker.Models;
 using linkedInApplicationTracker.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.VisualStudio.Web.CodeGeneration;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace linkedInApplicationTracker.Pages;
@@ -11,10 +11,10 @@ public class ManageApplicationModel : PageModel
 {
     private readonly ILogger<ManageApplicationModel> _logger;
     private readonly ApplicationTrackerService _applicationTrackerService = default!;
+    private readonly IConfiguration Configuration; 
     [BindProperty]
     public Application Application {get; set;} = default!;
     public User? CurrentUser {get; set;} = default!;
-    public IList<Application> CurrentUsersApplications {get; set;} = default!;
     public int UserID = 1; // Will update once user auth is implemented.
     public string DateSort { get; set; }
     public string CompanySort { get; set; }
@@ -22,21 +22,31 @@ public class ManageApplicationModel : PageModel
     public string OutcomeSort { get; set; }
     public string CurrentFilter { get; set; }
     public string CurrentSort { get; set; }
+    public PaginatedList<Application> CurrentUsersApplications {get; set;}
 
-    public ManageApplicationModel(ILogger<ManageApplicationModel> logger, ApplicationTrackerService service)
+    public ManageApplicationModel(ILogger<ManageApplicationModel> logger, ApplicationTrackerService service, IConfiguration configuration)
     {
         _logger = logger;
         _applicationTrackerService = service; 
+        Configuration = configuration;
+
     }
     
-    public async Task<IActionResult> OnGetAsync(string sortOrder, string searchString)
+    public async Task<IActionResult> OnGetAsync(string sortOrder, string searchString, string currentFilter, int? pageIndex)
     {
-
+        CurrentSort = sortOrder; 
         DateSort = String.IsNullOrEmpty(sortOrder) ? "date_desc" : ""; // date ascending by default.
         CompanySort = sortOrder == "Company" ? "company_desc" : "Company";
         OutcomeSort = sortOrder == "Outcome" ? "outcome_desc" : "Outcome";
         TitleSort = sortOrder == "Title" ? "title_desc" : "Title";
-
+        if (searchString != null)
+        {
+            pageIndex = 1; 
+        }
+        else
+        {
+            searchString = currentFilter;
+        }
         CurrentFilter = searchString;
 
         if (UserID == null) // Will update once user auth is implemented.
@@ -97,10 +107,11 @@ public class ManageApplicationModel : PageModel
                 break;
         }
 
+        var pageSize = Configuration.GetValue("PageSize", 10);
         // Execute Query
         try
         {
-             CurrentUsersApplications = await _applicationTrackerService.ExecuteApplicationsQueryAsync(applicationIQ);
+             CurrentUsersApplications = await _applicationTrackerService.GetPagedApplicationsAsync(applicationIQ, pageIndex ?? 1, pageSize);
         }
         catch (Exception ex)
         {
