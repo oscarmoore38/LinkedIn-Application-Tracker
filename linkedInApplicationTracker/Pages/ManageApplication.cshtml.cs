@@ -16,13 +16,13 @@ public class ManageApplicationModel : PageModel
     public Application Application {get; set;} = default!;
     public User? CurrentUser {get; set;} = default!;
     public int UserID = 1; // Will update once user auth is implemented.
-    public string DateSort { get; set; }
-    public string CompanySort { get; set; }
-    public string TitleSort { get; set; }
-    public string OutcomeSort { get; set; }
-    public string CurrentFilter { get; set; }
-    public string CurrentSort { get; set; }
-    public PaginatedList<Application> CurrentUsersApplications {get; set;}
+    public string? DateSort { get; set; }
+    public string? CompanySort { get; set; }
+    public string? TitleSort { get; set; }
+    public string? OutcomeSort { get; set; }
+    public string? CurrentFilter { get; set; }
+    public string? CurrentSort { get; set; }
+    public PaginatedList<Application>? CurrentUsersApplications {get; set;}
 
     public ManageApplicationModel(ILogger<ManageApplicationModel> logger, ApplicationTrackerService service, IConfiguration configuration)
     {
@@ -77,7 +77,6 @@ public class ManageApplicationModel : PageModel
         // Load Applications for current user 
         IQueryable<Application> applicationIQ =_applicationTrackerService.GetApplicationsByUserId(UserID, searchString);    
         
-        Console.WriteLine($"Current SearchString value = {searchString}");
         // Apply sorting
         switch (sortOrder)
         {
