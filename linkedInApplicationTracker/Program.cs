@@ -1,6 +1,8 @@
 using linkedInApplicationTracker.Data;
 using linkedInApplicationTracker.Services;
 using Microsoft.EntityFrameworkCore;
+using linkedInApplicationTracker.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,15 @@ builder.Services.AddScoped<ApplicationTrackerService>();
 builder.Services.AddDbContext<ApplicationTrackerContext>(options => 
     options.UseSqlite(builder.Configuration.GetConnectionString("ApplicationTrackerContextSQLite")));
 
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddDbContext<linkedInApplicationTrackerIdentityDbContext>(options => 
+    options.UseSqlite(builder.Configuration.GetConnectionString("ApplicationTrackerContextSQLite")));
+
+builder.Services.AddDefaultIdentity<AuthUser>(options => {
+    options.SignIn.RequireConfirmedAccount = true;
+
+    })
+    .AddEntityFrameworkStores<linkedInApplicationTrackerIdentityDbContext>();
+
 
 var app = builder.Build();
 
