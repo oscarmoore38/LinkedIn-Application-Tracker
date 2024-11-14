@@ -14,12 +14,13 @@ namespace linkedInApplicationTracker.Data
 
         // Explicitly configuring due to requirement for cascade delete
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>()
-            .HasMany(u => u.Applications)
-            .WithOne(a => a.User)
-            .HasForeignKey(a => a.UserID)
-            .OnDelete(DeleteBehavior.Cascade); 
+        {                     
+
+            modelBuilder.Entity<Application>()
+                .HasOne(a => a.User)               
+                .WithMany(u => u.Applications)     
+                .HasForeignKey(a => a.UserID)      
+                .OnDelete(DeleteBehavior.Cascade); 
         }
     }
 }

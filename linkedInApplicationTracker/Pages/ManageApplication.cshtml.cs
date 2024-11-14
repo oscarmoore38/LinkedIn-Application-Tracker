@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using System;
+using linkedInApplicationTracker.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace linkedInApplicationTracker.Pages;
 
@@ -11,11 +13,10 @@ public class ManageApplicationModel : PageModel
 {
     private readonly ILogger<ManageApplicationModel> _logger;
     private readonly ApplicationTrackerService _applicationTrackerService = default!;
+    private readonly UserManager<AuthUser> _userManager = default!; 
     private readonly IConfiguration Configuration; 
     [BindProperty]
     public Application Application {get; set;} = default!;
-    public User? CurrentUser {get; set;} = default!;
-    public int UserID = 1; // Will update once user auth is implemented.
     public string? DateSort { get; set; }
     public string? CompanySort { get; set; }
     public string? TitleSort { get; set; }
@@ -24,10 +25,11 @@ public class ManageApplicationModel : PageModel
     public string? CurrentSort { get; set; }
     public PaginatedList<Application>? CurrentUsersApplications {get; set;}
 
-    public ManageApplicationModel(ILogger<ManageApplicationModel> logger, ApplicationTrackerService service, IConfiguration configuration)
+    public ManageApplicationModel(ILogger<ManageApplicationModel> logger, UserManager<AuthUser> userManager, ApplicationTrackerService service, IConfiguration configuration)
     {
         _logger = logger;
         _applicationTrackerService = service; 
+        _userManager = userManager;
         Configuration = configuration;
 
     }
@@ -49,33 +51,25 @@ public class ManageApplicationModel : PageModel
         }
         CurrentFilter = searchString;
 
-        if (UserID == null) // Will update once user auth is implemented.
+        // Get Current Logged in User 
+        var CurrentLoggedInUser = await _userManager.GetUserAsync(User);
+
+        // Redirect to login if null
+        if (CurrentLoggedInUser == null) 
         {
-            return NotFound();
+            return Challenge();
         }
 
-        // Check if User exists
-        try
-        {
-        
-            CurrentUser = await _applicationTrackerService.GetUserByIdAsync(UserID);
+        // Load logged in users applications profile
+        var CurrentUserApplicationsProfile = await _applicationTrackerService.GetUserByIdAsync(CurrentLoggedInUser.UserID);
 
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while finding user with ID: {UserID}", UserID);
-
-            ModelState.AddModelError(string.Empty, "An error occurred while finding user.");
-
-        }
-
-        if (CurrentUser == null)
+        if (CurrentUserApplicationsProfile == null)
         {
             return NotFound();
         }
 
         // Load Applications for current user 
-        IQueryable<Application> applicationIQ =_applicationTrackerService.GetApplicationsByUserId(UserID, searchString);    
+        IQueryable<Application> applicationIQ =_applicationTrackerService.GetApplicationsByUserId(CurrentLoggedInUser.UserID, searchString);    
         
         // Apply sorting
         switch (sortOrder)
@@ -114,7 +108,7 @@ public class ManageApplicationModel : PageModel
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while getting applications for user with ID: {UserID}", UserID);
+            _logger.LogError(ex, "Error occurred while getting applications for user with ID: {UserID}", CurrentLoggedInUser.UserID);
 
             ModelState.AddModelError(string.Empty, "An error occurred while getting user applications.");
 

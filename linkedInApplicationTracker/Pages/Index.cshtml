@@ -4,7 +4,14 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to the LinkedIn Job Tracker</h1>
-    <p class="lead">Because LinkedIn's built in application filtering functionality is just no good.</p>
+<h2>@Model.WelcomeMessage</h2>
+
+<div>
+    <h3>Application Summary</h3>
+    <p>Total Applications: @Model.TotalApplications</p>
+    <p>Applied: @Model.AppliedCount</p>
+    <p>Interviewing: @Model.InterviewingCount</p>
+    <p>Rejected: @Model.RejectedCount</p>
+    <p>Offer: @Model.OfferCount</p>
+    <p>Accepted: @Model.AcceptedCount</p>
 </div>

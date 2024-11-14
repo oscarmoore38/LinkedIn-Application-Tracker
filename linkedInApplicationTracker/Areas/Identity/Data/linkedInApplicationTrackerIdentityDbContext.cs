@@ -14,9 +14,15 @@ public class linkedInApplicationTrackerIdentityDbContext : IdentityDbContext<Aut
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<AuthUser>()
+                .HasOne(u => u.User)           
+                .WithOne()                         
+                .HasForeignKey<AuthUser>(u => u.UserID)  
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade); 
+                
         base.OnModelCreating(builder);
         // Renaming tables to avoid conflict with existing "User" table
-        // Renaming Identity tables
         builder.Entity<AuthUser>(b => {
             b.ToTable("Account");
         });

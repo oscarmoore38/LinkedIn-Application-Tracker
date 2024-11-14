@@ -8,7 +8,7 @@
     <p>To add new applications, use the form below or mass upload via supported file</p>
 </div>
 <form method="post">
-    <input type="hidden" asp-for="NewApplication.UserID" value="@Model.CurrentUser?.UserID"/>
+    <input type="hidden" asp-for="NewApplication.UserID" value="@Model.CurrentUserApplicationsProfile?.UserID"/>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     
 

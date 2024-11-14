@@ -2,45 +2,45 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using linkedInApplicationTracker.Models;
 using linkedInApplicationTracker.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Identity.Client;
+using linkedInApplicationTracker.Areas.Identity.Data;
+
 
 namespace linkedInApplicationTracker.Pages;
 
 public class AddApplication : PageModel
 {
     private readonly ILogger<AddApplication> _logger;
+    private readonly UserManager<AuthUser> _userManager;
+    private readonly ApplicationTrackerService  _applicationTrackerService; 
+
     [BindProperty]
     public Application NewApplication {get; set;} = default!; 
-    private readonly ApplicationTrackerService _service; 
-    public User? CurrentUser {get; set;} = default!;
-    public int UserID = 1; // Will update once user auth is implemented.
+    public User? CurrentUserApplicationsProfile {get; set;} = default!; 
     
     
-    public AddApplication(ApplicationTrackerService service, ILogger<AddApplication> logger)
+    public AddApplication(UserManager<AuthUser> userManager, ApplicationTrackerService ApplicationTrackerService, ILogger<AddApplication> logger)
     {
         _logger = logger;
-        _service = service;
+        _applicationTrackerService = ApplicationTrackerService;
+        _userManager = userManager;
     }
     public async Task<IActionResult> OnGetAsync()
     {
-        // Check current user - will update and change code once auth is implemented
-        if (UserID == null)
-        {
-            return NotFound();
-        }
-        
-        try 
-        {
-            CurrentUser = await _service.GetUserByIdAsync(UserID);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while finding user with ID: {UserID}", UserID);
+        // Get Current Logged in User 
+        var CurrentLoggedInUser = await _userManager.GetUserAsync(User);
 
-            ModelState.AddModelError(string.Empty, "An error occurred while finding user.");
+        // Redirect to login if null
+        if (CurrentLoggedInUser == null) 
+        {
+            return Challenge();
         }
 
-        if (CurrentUser == null)
+        // Load logged in users applications profile
+        CurrentUserApplicationsProfile = await _applicationTrackerService.GetUserByIdAsync(CurrentLoggedInUser.UserID);
+
+        if (CurrentUserApplicationsProfile == null)
         {
             return NotFound();
         }
@@ -58,7 +58,7 @@ public class AddApplication : PageModel
 
         try
         {
-            await _service.AddApplicationAsync(NewApplication);
+            await _applicationTrackerService.AddApplicationAsync(NewApplication);
         }
         catch (Exception ex)
         {

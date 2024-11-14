@@ -16,8 +16,10 @@ namespace linkedInApplicationTracker.Services
 
         // CRUD skeleton code below:
 
-        public void AddUser()
+        public async Task AddUserAsync(User newUser)
         {
+            await _ApplicationTrackerContext.Users.AddAsync(newUser);
+            await _ApplicationTrackerContext.SaveChangesAsync();
         
         }
 
@@ -54,6 +56,15 @@ namespace linkedInApplicationTracker.Services
             return await PaginatedList<Application>.CreateAsync(applicationIQ.AsNoTracking(), pageIndex, pageSize);
         }
 
+        public async Task<List<Application>> GetAllApplicationsByUserIdAsync(int userId)
+        {
+            return await _ApplicationTrackerContext.Users
+                .Where(u => u.UserID == userId)
+                .Include(u => u.Applications) 
+                .SelectMany(u => u.Applications) 
+                .ToListAsync();
+        }
+
         public void UpdateUser(int id)
         {
         
@@ -82,7 +93,7 @@ namespace linkedInApplicationTracker.Services
 
         public async Task AddApplicationAsync(Application applicationToAdd)
         {
-            _ApplicationTrackerContext.Applications.Add(applicationToAdd);
+            await _ApplicationTrackerContext.Applications.AddAsync(applicationToAdd);
             await _ApplicationTrackerContext.SaveChangesAsync();
         }
 
